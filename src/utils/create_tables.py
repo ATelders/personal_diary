@@ -2,7 +2,6 @@ import sys
 import mysql.connector
 from mysql.connector import errorcode
 
-
 sys.path.insert(0, '/home/apprenant/simplon_projects/personal_diary/')
 from src.config import USER, PASSWORD
 
@@ -61,8 +60,6 @@ TABLES['emotion'] = (
     '''
 )
 
-
-
 # Create database function
 
 def create_database(cursor):
@@ -72,7 +69,6 @@ def create_database(cursor):
     except mysql.connector.Error as err:
         print("Failed creating database: {}".format(err))
         exit(1)
-
 
 # Create database if not exists
 

@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+import uvicorn
 import sys
 sys.path.insert(0, '/home/apprenant/simplon_projects/personal_diary/')
 from src.config import USER, PASSWORD
@@ -37,3 +38,5 @@ def get_user(user_id):
 
 
 
+if __name__ == "__main__":
+    uvicorn.run("api:app", host="0.0.0.0", port=8080)
