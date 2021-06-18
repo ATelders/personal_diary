@@ -1,7 +1,7 @@
 import sys
 sys.path.insert(0, '/home/apprenant/simplon_projects/personal_diary/')
 from src.config import USER, PASSWORD
-from src.utils.edit_users import add_client
+from src.utils.edit_users import add_user
 import streamlit as st
 import mysql.connector
 from mysql.connector import errorcode
@@ -20,7 +20,7 @@ name = st.text_input('nom')
 prenom = st.text_input('prenom')
 email = st.text_input('email')
 
-client_data = [name, prenom, email]
+user_data = [name, prenom, email]
 
 submit = st.button('Submit')
 
@@ -28,10 +28,10 @@ submit = st.button('Submit')
 
 if submit:
     try :
-        cursor.execute(add_client, client_data)
-        print("Client créé : {}".format(client_data))
+        cursor.execute(add_user, user_data)
+        print("Utilisateur créé : {}".format(user_data))
     except :
-        print("Le client{} existe déjà".format(client_data))
+        print("L'utilisateur'{} existe déjà".format(user_data))
 
 
 db_connection.commit()

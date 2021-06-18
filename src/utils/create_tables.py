@@ -17,9 +17,9 @@ cursor = db_connection.cursor()
 
 TABLES = {}
 
-TABLES['client'] = (
+TABLES['user'] = (
     '''
-    CREATE TABLE client (
+    CREATE TABLE user (
         id smallint unsigned NOT NULL AUTO_INCREMENT,
         nom VARCHAR(100),
         prenom VARCHAR(100) NOT NULL,
@@ -33,12 +33,12 @@ TABLES['diary_entry'] = (
     '''
     CREATE TABLE diary_entry (
         id smallint unsigned NOT NULL AUTO_INCREMENT,
-        client_id smallint unsigned NOT NULL,
+        user_id smallint unsigned NOT NULL,
         date DATETIME,
         content VARCHAR(500) NOT NULL,
         PRIMARY KEY (id),
-        FOREIGN KEY (client_id)
-            REFERENCES client (id)
+        FOREIGN KEY (user_id)
+            REFERENCES user (id)
             ON DELETE CASCADE
             ON UPDATE CASCADE
     )   ENGINE=InnoDB
