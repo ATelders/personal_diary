@@ -1,14 +1,17 @@
 from os import name
+
+import requests
 from fastapi import FastAPI
 import uvicorn
 import sys
 sys.path.insert(0, '/home/apprenant/simplon_projects/personal_diary/')
 from src.config import USER, PASSWORD
-from src.utils.sql_requests import request_select_user, request_add_user, request_add_entry, request_entries_from_user
+from src.utils.sql_requests import *
 import mysql.connector
 from mysql.connector import errorcode
 import pickle5 as pickle
 import datetime
+from src.utils.functions import date_to_datetime
 
 # Instanciate the API
 app = FastAPI()
@@ -62,6 +65,18 @@ def get_entries(user_id):
     entries = cursor.fetchall()
     cursor.close()
     db_connection.close()
+    return {'entries': entries }
+
+@app.get("user_id/entries")
+def get_entries_date(dict_date: dict):
+    db_connection = get_connection()
+    cursor = db_connection.cursor()
+    user_id = int(dict_date['user'])
+    date = datetime.datetime.strptime(dict_date["date"], "%m/%d/%y").date()
+    cursor.execute(request_entries_from_user, (user_id, date))
+    entries = cursor.fetchall()
+    cursor.close()
+    db_connection.close()
     return {'entries': entries }  
 
 @app.get("/emotion/{sentence}")
@@ -101,3 +116,13 @@ def add_entry(entry_data: dict):
     db_connection.commit()
     db_connection.close()
 
+# DELETE
+
+@app.delete("/delete_user/{user_id}")
+def delete_user(user_id: int):
+    db_connection = get_connection()
+    cursor = db_connection.cursor()
+    cursor.execute(request_delete_user, (user_id, ))
+    cursor.close()
+    db_connection.commit()
+    db_connection.close()

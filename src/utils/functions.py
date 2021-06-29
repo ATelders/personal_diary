@@ -1,5 +1,5 @@
 import requests
-from datetime import date
+from datetime import date, datetime
 import locale
 locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 
@@ -46,9 +46,20 @@ def get_entries(user_id):
     '''
     Get all the entries from a user's id
     '''
-    res = requests.get("http://0.0.0.0:8080/user_id/entries/{user_id}")
+    res = requests.get(f"http://0.0.0.0:8080/user_id/entries/{user_id}")
     entries = res.json()['entries']
     return entries
 
+def get_entries_date(dict_date):
+    '''
+    Get all the entries from a user's id
+    '''
+    res = requests.get(f"http://0.0.0.0:8080/user_id/entries_date", json=dict_date)
+    entries = res.json()
+    return entries
 
-#def get_user_texts(name):
+def delete_user(id):
+    requests.delete(f"http://0.0.0.0:8080/delete_user/{id}")
+
+def date_to_datetime(date):
+    return datetime.combine(date ,datetime.min.time())

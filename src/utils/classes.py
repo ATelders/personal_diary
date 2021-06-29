@@ -1,3 +1,5 @@
+#from pydantic import BaseModel
+
 class Diary_entry:
     def __init__(self, user_id, date, content, emotion):
         self.user_id = user_id
@@ -6,7 +8,7 @@ class Diary_entry:
         self.emotion = emotion
 
     def get_text(self):
-        return "Le texte de la date du {} est: \n{}.\nL'émotion est {}".format(self.date, self.content, self.emotion)
+        return "Le texte de la date du {} est: \n{}\n\nL'émotion est {}".format(self.date, self.content, self.emotion)
 
     def entry_data(self):
         return {
@@ -15,3 +17,4 @@ class Diary_entry:
         'content': self.content,
         'emotion': self.emotion
         }
+

@@ -2,10 +2,13 @@ import sys
 
 from utils.api import get_entries
 sys.path.insert(0, '/home/apprenant/simplon_projects/personal_diary/')
-from src.utils.functions import add_user, get_user_info
+from src.utils.functions import add_user, get_user_info, delete_user
 import streamlit as st
 
-a = st.sidebar.radio('Menu du coach:',['Créer un utilisateur', 'Afficher un utilisateur'])
+a = st.sidebar.radio('Menu du coach:',[
+    'Créer un utilisateur',
+    'Afficher un utilisateur',
+    'Supprimer un utilisateur'])
 
 st.title('La page du coach')
 
@@ -47,3 +50,12 @@ elif a == 'Afficher un utilisateur':
             st.markdown("<hr />", unsafe_allow_html=True)
 
 
+elif a == 'Supprimer un utilisateur':
+    st.subheader("Supprimer un utilisateur")
+    id = st.text_input('id')
+    if id:
+        try:
+            delete_user(int(id))
+            print("Utilisateur supprimé : {}".format(id))
+        except :
+            print("L'utilisateur'{} n'a pas pu être supprimé".format(id))
