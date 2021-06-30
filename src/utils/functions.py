@@ -1,3 +1,4 @@
+import json
 import requests
 from datetime import date, datetime
 import locale
@@ -11,6 +12,13 @@ def get_emotion(text):
     path = res.json()
     emotion = path['label']
     return emotion
+
+def get_users():
+    res = requests.get(f"http://0.0.0.0:8080/users")
+    path = res.json()
+    print(path)
+
+    return path    
 
 def get_user_info(id):
     '''
@@ -28,13 +36,16 @@ def add_user(user):
     '''
     Add a new user
     '''
-    requests.post("http://0.0.0.0:8080/add_user", json=user)
+    response = requests.post("http://0.0.0.0:8080/add_user", json=user)
+    return response
 
-def get_today():
+def update_user(user_id, user):
     '''
-    Get today's date
+    Update a user
     '''
-    return date.today()
+    response = requests.put(f"http://0.0.0.0:8080/update_user/{user_id}", json=user)
+    return response
+
 
 def add_entry(diary_entry):
     '''
@@ -47,7 +58,8 @@ def get_entries(user_id):
     Get all the entries from a user's id
     '''
     res = requests.get(f"http://0.0.0.0:8080/user_id/entries/{user_id}")
-    entries = res.json()['entries']
+    path = res.json()
+    entries = path['entries']
     return entries
 
 def get_entries_date(dict_date):
@@ -63,3 +75,12 @@ def delete_user(id):
 
 def date_to_datetime(date):
     return datetime.combine(date ,datetime.min.time())
+
+def save_img(user_id):
+    response = requests.get("https://thispersondoesnotexist.com/image")
+    file = open("/home/apprenant/simplon_projects/personal_diary/avatars/{}.png".format(user_id), "wb")
+    file.write(response.content)
+    file.close()
+
+def get_image_path(user_id):
+    return "/home/apprenant/simplon_projects/personal_diary/avatars/{}.png".format(user_id)

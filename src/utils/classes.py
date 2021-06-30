@@ -1,20 +1,16 @@
-#from pydantic import BaseModel
+from datetime import datetime
+from io import StringIO
+from typing import Optional
+from pydantic import BaseModel
 
-class Diary_entry:
-    def __init__(self, user_id, date, content, emotion):
-        self.user_id = user_id
-        self.date = date
-        self.content = content
-        self.emotion = emotion
+class User(BaseModel):
+    id: Optional[int] = None
+    name = 'Doe'
+    first_name = 'John'
+    email = 'jd@gmail.com'
 
-    def get_text(self):
-        return "Le texte de la date du {} est: \n{}\n\nL'émotion est {}".format(self.date, self.content, self.emotion)
-
-    def entry_data(self):
-        return {
-        'user_id': self.user_id,
-        'date': self.date,
-        'content': self.content,
-        'emotion': self.emotion
-        }
-
+class Diary_entry(BaseModel):
+    user_id : int
+    date : str
+    content : str
+    emotion : str

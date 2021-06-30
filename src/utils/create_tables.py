@@ -18,8 +18,8 @@ TABLES['user'] = (
     '''
     CREATE TABLE user (
         id smallint unsigned NOT NULL AUTO_INCREMENT,
-        nom VARCHAR(100),
-        prenom VARCHAR(100) NOT NULL,
+        name VARCHAR(100),
+        first_name VARCHAR(100) NOT NULL,
         email VARCHAR(60) NOT NULL,
         PRIMARY KEY (id)
     )   ENGINE=InnoDB
