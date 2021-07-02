@@ -13,6 +13,7 @@ from mysql.connector import errorcode
 import pickle5 as pickle
 import datetime
 from src.utils.functions import date_to_datetime, save_img
+import pandas as pd
 
 # Instanciate the API
 app = FastAPI()
@@ -24,6 +25,8 @@ if __name__ == "__main__":
 filename = '/home/apprenant/simplon_projects/personal_diary/models/lr_kaggle_tfidf.sav'
 classifier = pickle.load(open(filename, 'rb'))
 tf = pickle.load(open('/home/apprenant/simplon_projects/personal_diary/models/tfidf.sav', 'rb'))
+
+
 
 # Connect to SQL
 
@@ -145,9 +148,17 @@ def predict_emotion(sentence):
     '''
     matrix = tf.transform([sentence])
     predictions = classifier.predict(matrix)
+    predictions_proba = classifier.predict_proba(matrix)
+    print(predictions_proba)
     labels = ["happy", "sadness", "love", "anger", "fear", "surprise"]
     labels.sort()
-    return {'label': labels[int(predictions)]}
+    data = {'Labels':labels,
+            'Probabilities':predictions_proba[0]}
+    proba_df = pd.DataFrame(data, columns=['Labels', 'Probabilities'])
+    
+    return {'label': labels[int(predictions)], 'probas': proba_df}
+
+#list(predictions_proba[0]
 
 # PUT
 

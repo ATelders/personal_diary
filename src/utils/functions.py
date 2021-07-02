@@ -14,7 +14,8 @@ def get_emotion(text):
     res = requests.get(f"http://0.0.0.0:8080/emotion/{text}")
     path = res.json()
     emotion = path['label']
-    return emotion
+    probas = path['probas']
+    return emotion, probas
 
 def get_users():
     res = requests.get(f"http://0.0.0.0:8080/users")
@@ -110,8 +111,15 @@ def display_entries(entries):
     for item in range(len(entries)):
         d = datetime.strptime(entries[item][2], '%Y-%m-%dT%H:%M:%S')
         st.write("Date: {0:%d} {0:%B} {0:%Y}".format(d))
-        st.write("Phrase: ", entries[item][3])
-        st.write("Émotion: ", entries[item][4])
+        text = entries[item][3]
+        st.write("Phrase: ", text)
+        emotion = get_emotion(text)[0]
+        st.write("Émotion dominante: ", emotion)
+        probas = get_emotion(text)[1]
+        probas = pd.DataFrame(probas)
+        probas.sort_values(by='Probabilities', ascending=False, inplace=True)
+        st.write("Probabilités: ")
+        st.dataframe(probas)     
         st.markdown("<hr />", unsafe_allow_html=True)
 
 def display_pie_chart(entries):

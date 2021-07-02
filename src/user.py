@@ -10,7 +10,7 @@ user_id = st.sidebar.text_input("Entrez votre numéro d'utilisateur :")
 if user_id:
     name, first_name, email = get_user_info(user_id)
     st.title("Journal intime de {} {}".format(first_name, name))
-    st.balloons()
+    #st.balloons()
     try:
         st.image(get_image_path(user_id), width=100)
     except:
@@ -28,8 +28,9 @@ if user_id and text and submit:
     external_data['user_id'] = user_id
     external_data['date'] = datetime.today().strftime("%m/%d/%y")
     external_data['content'] = text
-    external_data['emotion'] = get_emotion(text)
-    print(external_data)
+    external_data['emotion'], probas = get_emotion(text)
+    #st.write(get_emotion(text))
+
     add_entry(external_data)
 
 

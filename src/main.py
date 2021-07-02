@@ -1,6 +1,5 @@
 import sys
 
-from streamlit.proto import DateInput_pb2
 
 from utils.api import get_entries, update_user
 from utils.classes import User
@@ -87,6 +86,7 @@ elif a == 'Afficher un utilisateur':
         display_entries(entries)
 
 elif a == 'Ambiance générale':
+    st.header('Ambiance générale')
     st.write("Choisissez la période: ")
     date_1 = st.date_input('Entre le: ', key='date_1')
     date_2 = st.date_input('et le :', key='date_2')
@@ -95,4 +95,6 @@ elif a == 'Ambiance générale':
 
     if date_1 and date_2:
         entries = get_all_entries_dates(date_1, date_2)
+        st.write('Il y a {} textes sur cette période.'.format(len(entries)))
+
         display_pie_chart(entries)
