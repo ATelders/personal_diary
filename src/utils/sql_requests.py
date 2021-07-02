@@ -18,3 +18,5 @@ request_delete_user = ("DELETE FROM user WHERE id = %s")
 request_display_all_users = ("SELECT * FROM user")
 
 request_update_user = ("UPDATE user SET name = %s, first_name = %s, email = %s WHERE id = %s")
+
+request_all_entries_between_dates = ("SELECT * FROM diary_entry WHERE date BETWEEN %s AND %s")

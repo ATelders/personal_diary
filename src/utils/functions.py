@@ -3,6 +3,9 @@ import requests
 from datetime import date, datetime
 import locale
 locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
 
 def get_emotion(text):
     '''
@@ -62,13 +65,30 @@ def get_entries(user_id):
     entries = path['entries']
     return entries
 
-def get_entries_date(dict_date):
+def get_entries_date(user_id, date):
     '''
     Get all the entries from a user's id
     '''
-    res = requests.get(f"http://0.0.0.0:8080/user_id/entries_date", json=dict_date)
-    entries = res.json()
+    res = requests.get(f"http://0.0.0.0:8080/user_id/entries/{user_id}/{date}")
+    print('get entries')
+    print(date)
+    path = res.json()
+    entries = path['entries']
     return entries
+
+def get_all_entries_dates(date_1, date_2):
+    '''
+    Get all the entries between 2 dates
+    '''
+    res = requests.get(f"http://0.0.0.0:8080/entries/{date_1}/{date_2}")
+    print('get entries')
+    print(date_1)
+    print(date_2)
+    path = res.json()
+    print(path)
+    entries = path['entries']
+    return entries
+
 
 def delete_user(id):
     requests.delete(f"http://0.0.0.0:8080/delete_user/{id}")
@@ -84,3 +104,32 @@ def save_img(user_id):
 
 def get_image_path(user_id):
     return "/home/apprenant/simplon_projects/personal_diary/avatars/{}.png".format(user_id)
+
+
+def display_entries(entries):
+    for item in range(len(entries)):
+        d = datetime.strptime(entries[item][2], '%Y-%m-%dT%H:%M:%S')
+        st.write("Date: {0:%d} {0:%B} {0:%Y}".format(d))
+        st.write("Phrase: ", entries[item][3])
+        st.write("Émotion: ", entries[item][4])
+        st.markdown("<hr />", unsafe_allow_html=True)
+
+def display_pie_chart(entries):
+    entries_df = pd.DataFrame(entries)
+    wheel_labels = pd.DataFrame()
+    wheel_labels['emotions'] = entries_df[4].unique()
+    wheel_labels['rates'] = entries_df[4].value_counts(normalize=True).values
+
+
+    # Pie chart, where the slices will be ordered and plotted counter-clockwise:
+    labels = wheel_labels['emotions']
+    sizes = wheel_labels['rates']
+    length = len(labels.unique())
+    explode = ([0.01 for i in range(length)])  # only "explode" the 2nd slice (i.e. 'Hogs')
+
+    fig1, ax1 = plt.subplots()
+    ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
+            shadow=False, startangle=90)
+    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+    st.pyplot(fig1)

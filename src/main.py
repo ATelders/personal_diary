@@ -1,19 +1,20 @@
 import sys
 
+from streamlit.proto import DateInput_pb2
+
 from utils.api import get_entries, update_user
 from utils.classes import User
 sys.path.insert(0, '/home/apprenant/simplon_projects/personal_diary/')
 from src.utils.functions import *
 import streamlit as st
-import pandas as pd
-import matplotlib.pyplot as plt
+import time
 
 
 a = st.sidebar.radio('Menu du coach:',[
     'Afficher tous les utilisateurs',
     'Créer un utilisateur',
     'Afficher un utilisateur',
-    'Supprimer un utilisateur'
+    'Ambiance générale'
     ])
 
 st.title('La page du coach')
@@ -77,44 +78,21 @@ elif a == 'Afficher un utilisateur':
         st.markdown("<hr />", unsafe_allow_html=True)
         try:
             entries = get_entries(id)
-            entries_df = pd.DataFrame(entries)
-            wheel_labels = pd.DataFrame()
-            wheel_labels['emotions'] = entries_df[4].unique()
-            wheel_labels['rates'] = entries_df[4].value_counts(normalize=True).values
-
-
-            # Pie chart, where the slices will be ordered and plotted counter-clockwise:
-            labels = wheel_labels['emotions']
-            sizes = wheel_labels['rates']
-            length = len(labels.unique())
-            explode = ([0.01 for i in range(length)])  # only "explode" the 2nd slice (i.e. 'Hogs')
-
-            fig1, ax1 = plt.subplots()
-            ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
-                    shadow=False, startangle=90)
-            ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-
-            st.pyplot(fig1)
+            with st.spinner(text='Construction de la roue des émotions...'):
+                time.sleep(3)
+                display_pie_chart(entries)
         except:
             pass
 
+        display_entries(entries)
 
+elif a == 'Ambiance générale':
+    st.write("Choisissez la période: ")
+    date_1 = st.date_input('Entre le: ', key='date_1')
+    date_2 = st.date_input('et le :', key='date_2')
+    date_1 = date_to_datetime(date_1)
+    date_2 = date_to_datetime(date_2)
 
-
-        for item in range(len(entries)):
-            d = datetime.strptime(entries[item][2], '%Y-%m-%dT%H:%M:%S')
-            st.write("Date: {0:%d} {0:%B} {0:%Y}".format(d))
-            st.write("Phrase: ", entries[item][3])
-            st.write("Émotion: ", entries[item][4])
-            st.markdown("<hr />", unsafe_allow_html=True)
-
-
-elif a == 'Supprimer un utilisateur':
-    st.subheader("Supprimer un utilisateur")
-    id = st.text_input('id')
-    if id:
-        try:
-            delete_user(int(id))
-            print("Utilisateur supprimé : {}".format(id))
-        except :
-            print("L'utilisateur'{} n'a pas pu être supprimé".format(id))
+    if date_1 and date_2:
+        entries = get_all_entries_dates(date_1, date_2)
+        display_pie_chart(entries)

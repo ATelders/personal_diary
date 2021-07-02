@@ -1,8 +1,9 @@
 import sys
+from typing import Optional
 sys.path.insert(0, '/home/apprenant/simplon_projects/personal_diary/')
 from os import name
 import requests
-from fastapi import FastAPI
+from fastapi import Body, FastAPI
 from src.utils.classes import Diary_entry, User
 import uvicorn
 from src.config import USER, PASSWORD
@@ -11,7 +12,7 @@ import mysql.connector
 from mysql.connector import errorcode
 import pickle5 as pickle
 import datetime
-from src.utils.functions import save_img
+from src.utils.functions import date_to_datetime, save_img
 
 # Instanciate the API
 app = FastAPI()
@@ -34,6 +35,35 @@ def get_connection():
         database=DB_NAME,
         password=PASSWORD)
     return db_connection
+
+# POST
+
+@app.post("/add_user")
+def add_user(user_data: User):
+    db_connection = get_connection()
+    cursor = db_connection.cursor()
+    cursor.execute(request_add_user, ([user_data.name, user_data.first_name, user_data.email]))
+    cursor.close()
+    id = cursor.lastrowid
+    save_img(id)
+    db_connection.commit()
+    db_connection.close()
+    return {'id': id}
+
+@app.post("/add_entry")
+def add_entry(entry_data: Diary_entry):
+    db_connection = get_connection()
+    cursor = db_connection.cursor()
+    cursor.execute(request_add_entry, ([
+        entry_data.user_id,
+        datetime.datetime.strptime(entry_data.date, "%m/%d/%y").date(),
+        entry_data.content,
+        entry_data.emotion,
+        ])
+    )
+    cursor.close()
+    db_connection.commit()
+    db_connection.close()
 
 # GET
 
@@ -80,17 +110,33 @@ async def get_entries(user_id):
     db_connection.close()
     return {'entries': entries }
 
-@app.get("/user_id/entries")
-def get_entries_date(dict_date: dict):
+@app.get("/user_id/entries/{user_id}/{date}")
+async def get_entries_date(
+    user_id: int,
+    date: Optional[datetime.datetime]
+    ):
     db_connection = get_connection()
     cursor = db_connection.cursor()
-    user_id = int(dict_date['user'])
-    date = datetime.datetime.strptime(dict_date["date"], "%m/%d/%y").date()
-    cursor.execute(request_entries_from_user, (user_id, date))
+    user_id = int(user_id)
+    cursor.execute(request_entries_from_user_and_date, (user_id, date))
     entries = cursor.fetchall()
     cursor.close()
     db_connection.close()
-    return {'entries': entries }  
+    return {'entries': entries }
+
+@app.get("/entries/{date_1}/{date_2}")
+async def get_all_entries_dates(
+    date_1: datetime.datetime,
+    date_2: datetime.datetime
+    ):
+    db_connection = get_connection()
+    cursor = db_connection.cursor()
+    cursor.execute(request_all_entries_between_dates, (date_1, date_2))
+    entries = cursor.fetchall()
+    cursor.close()
+    db_connection.close()
+    return {'entries': entries }
+
 
 @app.get("/emotion/{sentence}")
 def predict_emotion(sentence):
@@ -102,35 +148,6 @@ def predict_emotion(sentence):
     labels = ["happy", "sadness", "love", "anger", "fear", "surprise"]
     labels.sort()
     return {'label': labels[int(predictions)]}
-
-# POST
-
-@app.post("/add_user")
-def add_user(user_data: User):
-    db_connection = get_connection()
-    cursor = db_connection.cursor()
-    cursor.execute(request_add_user, ([user_data.name, user_data.first_name, user_data.email]))
-    cursor.close()
-    id = cursor.lastrowid
-    save_img(id)
-    db_connection.commit()
-    db_connection.close()
-    return {'id': id}
-
-@app.post("/add_entry")
-def add_entry(entry_data: Diary_entry):
-    db_connection = get_connection()
-    cursor = db_connection.cursor()
-    cursor.execute(request_add_entry, ([
-        entry_data.user_id,
-        datetime.datetime.strptime(entry_data.date, "%m/%d/%y").date(),
-        entry_data.content,
-        entry_data.emotion,
-        ])
-    )
-    cursor.close()
-    db_connection.commit()
-    db_connection.close()
 
 # PUT
 
