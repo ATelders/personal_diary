@@ -1,9 +1,7 @@
 import sys
-
-
-from utils.api import get_entries, update_user
-from utils.classes import User
 sys.path.insert(0, '/home/apprenant/simplon_projects/personal_diary/')
+from src.api.api import get_entries, update_user
+from src.database.classes import User
 from src.utils.functions import *
 import streamlit as st
 import time
@@ -30,7 +28,6 @@ if a == 'Afficher tous les utilisateurs':
         if action == 'Supprimer':
             if st.button('Confirmer la suppression'):
                 delete_user(int(users[item][0]))
-                #users.pop(item)
         
         elif action == 'Modifier':
             data = {}

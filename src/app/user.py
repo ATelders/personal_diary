@@ -5,12 +5,9 @@ import streamlit as st
 
 user_id = st.sidebar.text_input("Entrez votre numéro d'utilisateur :")
 
-# st.text("Entrez votre numéro d'utilisateur :")
-# user_id = st.text_input('id')
 if user_id:
     name, first_name, email = get_user_info(user_id)
     st.title("Journal intime de {} {}".format(first_name, name))
-    #st.balloons()
     try:
         st.image(get_image_path(user_id), width=100)
     except:

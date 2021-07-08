@@ -1,8 +1,7 @@
 import sys
+sys.path.insert(0, '/home/apprenant/simplon_projects/personal_diary/')
 import mysql.connector
 from mysql.connector import errorcode
-
-sys.path.insert(0, '/home/apprenant/simplon_projects/personal_diary/')
 from src.config import USER, PASSWORD
 
 # MySQL Connector

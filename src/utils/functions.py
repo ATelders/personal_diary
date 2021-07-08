@@ -1,3 +1,5 @@
+import sys
+sys.path.insert(0, '/home/apprenant/simplon_projects/personal_diary/')
 import json
 import requests
 from datetime import date, datetime
@@ -6,6 +8,26 @@ locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import mysql.connector
+from src.config import USER, PASSWORD
+
+
+
+def call_connector(db="none"):
+    """ Function which connects to MySQL """
+    if db=="none":
+        db_connection = mysql.connector.connect(
+        host="localhost",
+        user=USER,
+        passwd = PASSWORD)
+    else:
+        db_connection = mysql.connector.connect(
+        host="localhost",
+        user=USER,
+        passwd = PASSWORD,
+        database=db)
+    db_cursor = db_connection.cursor(buffered=True, dictionary=False)
+    return db_connection, db_cursor
 
 def get_emotion(text):
     '''
@@ -40,7 +62,7 @@ def add_user(user):
     '''
     Add a new user
     '''
-    response = requests.post("http://0.0.0.0:8080/add_user", json=user)
+    response = requests.post("http://0.0.0.0:8080/user", json=user)
     return response
 
 def update_user(user_id, user):
