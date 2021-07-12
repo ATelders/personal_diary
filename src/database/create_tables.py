@@ -1,12 +1,14 @@
 import sys
 sys.path.insert(0, '/home/apprenant/simplon_projects/personal_diary/')
-import mysql.connector
-from mysql.connector import errorcode
 from src.config import USER, PASSWORD
+from mysql.connector import errorcode
+import mysql.connector
+
 
 # MySQL Connector
 DB_NAME = 'personal_diary'
-db_connection = mysql.connector.connect(user=USER, database=DB_NAME, password=PASSWORD)
+db_connection = mysql.connector.connect(
+    user=USER, database=DB_NAME, password=PASSWORD)
 cursor = db_connection.cursor()
 
 # TABLES dictionnary
@@ -44,7 +46,6 @@ TABLES['diary_entry'] = (
 )
 
 
-
 # Create database function
 
 def create_database(cursor):
@@ -56,6 +57,7 @@ def create_database(cursor):
         exit(1)
 
 # Create database if not exists
+
 
 try:
     cursor.execute("USE {}".format(DB_NAME))

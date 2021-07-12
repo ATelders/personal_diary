@@ -1,13 +1,12 @@
 import sys
 sys.path.insert(0, '/home/apprenant/simplon_projects/personal_diary/')
-from src.api.api import get_entries, update_user
-from src.database.classes import User
-from src.utils.functions import *
 import streamlit as st
 import time
+from src.api.api import get_entries, update_user
+from src.utils.functions import *
 
 
-a = st.sidebar.radio('Menu du coach:',[
+a = st.sidebar.radio('Menu du coach:', [
     'Afficher tous les utilisateurs',
     'Créer un utilisateur',
     'Afficher un utilisateur',
@@ -24,11 +23,11 @@ if a == 'Afficher tous les utilisateurs':
         st.write("n° client: ", users[item][0])
         st.write("Nom: ", users[item][2], users[item][1])
         st.write("E-mail: ", users[item][3])
-        action = st.radio('Radio', ['Afficher', 'Modifier','Supprimer'], key=users[item][0])
+        action = st.radio('Radio', [
+            'Afficher', 'Modifier', 'Supprimer'], key=users[item][0])
         if action == 'Supprimer':
             if st.button('Confirmer la suppression'):
                 delete_user(int(users[item][0]))
-        
         elif action == 'Modifier':
             data = {}
             data['name'] = st.text_input('Nom', users[item][1])
@@ -60,26 +59,22 @@ elif a == 'Afficher un utilisateur':
     st.subheader("Afficher les info d'un utilisateur")
     st.text('Chercher un utilisateur avec son id')
     id = st.text_input('id')
-
-
     if id:
         try:
             st.image(get_image_path(id), width=100)
         except:
             pass
-
         name, first_name, email = get_user_info(id)
-        st.write("Le nom de l'utilisateur avec l'id {} est {} {}".format(id, first_name, name))
+        st.write("""
+                 Le nom de l'utilisateur avec l'id {} est {} {}
+                 """.format(id, first_name, name))
         st.write("Son email est : {}".format(email))
         st.markdown("<hr />", unsafe_allow_html=True)
-        try:
-            entries = get_entries(id)
+        entries = get_entries(id)
+        if len(entries) > 0:
             with st.spinner(text='Construction de la roue des émotions...'):
-                time.sleep(3)
+                time.sleep(1)
                 display_pie_chart(entries)
-        except:
-            pass
-
         display_entries(entries)
 
 elif a == 'Ambiance générale':
@@ -93,5 +88,5 @@ elif a == 'Ambiance générale':
     if date_1 and date_2:
         entries = get_all_entries_dates(date_1, date_2)
         st.write('Il y a {} textes sur cette période.'.format(len(entries)))
-
-        display_pie_chart(entries)
+        if len(entries) > 0:
+            display_pie_chart(entries)

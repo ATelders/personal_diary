@@ -1,7 +1,7 @@
 import sys
 sys.path.insert(0, '/home/apprenant/simplon_projects/personal_diary/')
-from src.utils.functions import *
 import streamlit as st
+from src.utils.functions import *
 
 user_id = st.sidebar.text_input("Entrez votre numéro d'utilisateur :")
 
@@ -13,7 +13,10 @@ if user_id:
     except:
         pass
 
-st.write("Aujourd'hui, nous sommes le {0:%d} {0:%B} {0:%Y}.".format(date.today()))
+st.write("""
+         Aujourd'hui, nous sommes le {0:%d} {0:%B} {0:%Y}.
+         """
+         .format(date.today()))
 
 st.text("Entrez un texte : (Analyse d'émotions)")
 
@@ -26,21 +29,19 @@ if user_id and text and submit:
     external_data['date'] = datetime.today().strftime("%m/%d/%y")
     external_data['content'] = text
     external_data['emotion'], probas = get_emotion(text)
-    #st.write(get_emotion(text))
-
     add_entry(external_data)
 
-
 try:
-    date_input = st.date_input('Entrez une date pour rechercher le texte correspondant :', key='1')
+    date_input = st.date_input('''
+    Entrez une date pour rechercher le texte correspondant :
+    ''', key='1')
     submit_date = st.button('Envoyer', key='submit_date')
 except:
     date_input = None
-    date_input = st.date_input('Entrez une date pour rechercher le texte correspondant :', key='2')
+    date_input = st.date_input('''
+    Entrez une date pour rechercher le texte correspondant :
+    ''', key='2')
     submit_date = st.button('Envoyer', key='submit_date_2')
-
-
-
 if user_id:
     if submit_date:
 
