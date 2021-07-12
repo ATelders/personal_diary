@@ -1,14 +1,15 @@
 # personal_diary
 
-User
+### User
 The user can write a text everyday in the app and search for the texts he wrote at any given date.
 
-Coach
+### Coach
 The coach can add and edit users and get the texts for any users and the emotions associated to those texts.
 He can visualize a chart of emotions for any users or for all the users.
 
-User
+## File Structure
 
+```bash
 personal_diary/
 ┣ app/
 ┃ ┣ main.py         # The coach's backoffice
@@ -26,3 +27,4 @@ personal_diary/
 ┣ README.md
 ┣ MPD.png           # Physical Data Model and Class Diagram
 ┗ environment.yml   # Conda environment
+```
