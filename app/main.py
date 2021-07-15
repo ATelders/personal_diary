@@ -61,21 +61,24 @@ elif a == 'Afficher un utilisateur':
     id = st.text_input('id')
     if id:
         try:
-            st.image(get_image_path(id), width=100)
+            name, first_name, email = get_user_info(id)
+            try:
+                st.image(get_image_path(id), width=100)
+            except:
+                pass
+            st.write("""
+                    Le nom de l'utilisateur avec l'id {} est {} {}
+                    """.format(id, first_name, name))
+            st.write("Son email est : {}".format(email))
+            st.markdown("<hr />", unsafe_allow_html=True)
+            entries = get_entries(id)
+            if len(entries) > 0:
+                with st.spinner(text='Construction de la roue des émotions...'):
+                    time.sleep(1)
+                    display_pie_chart(entries)
+            display_entries(entries)
         except:
-            pass
-        name, first_name, email = get_user_info(id)
-        st.write("""
-                 Le nom de l'utilisateur avec l'id {} est {} {}
-                 """.format(id, first_name, name))
-        st.write("Son email est : {}".format(email))
-        st.markdown("<hr />", unsafe_allow_html=True)
-        entries = get_entries(id)
-        if len(entries) > 0:
-            with st.spinner(text='Construction de la roue des émotions...'):
-                time.sleep(1)
-                display_pie_chart(entries)
-        display_entries(entries)
+            st.write("Il n'y a pas d'utilisateur avec l'ID {}".format(id))
 
 elif a == 'Ambiance générale':
     st.header('Ambiance générale')

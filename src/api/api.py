@@ -27,6 +27,7 @@ DB_NAME = 'personal_diary'
 async def root():
     return {"message": "happiness"}
 
+# ----------------------------------------------------------------------------------- #
 # POST
 
 # Request to add a new user
@@ -70,8 +71,8 @@ def add_entry(entry_data: Diary_entry):
     return {"entry_date": entry_data.date, "text_content": entry_data.content}
 
 
+# ----------------------------------------------------------------------------------- #
 # GET
-
 
 @app.get("/users")
 async def get_all_users():
@@ -174,8 +175,8 @@ def predict_emotion(sentence):
     return {'label': labels[int(predictions)], 'probas': proba_df}
 
 
+# ----------------------------------------------------------------------------------- #
 # PUT
-
 
 @app.put("/update_user/{user_id}")
 def update_user(user_id, user_data: User):
@@ -196,6 +197,7 @@ def update_user(user_id, user_data: User):
     db_connection.close()
 
 
+# ----------------------------------------------------------------------------------- #
 # DELETE
 
 @app.delete("/delete_user/{user_id}")
